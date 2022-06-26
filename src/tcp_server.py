@@ -1,4 +1,4 @@
-# curl http://127.0.0.1:8080 -v --http0.9
+# curl http://127.0.0.1:8080 -v --http1.0
 # curl -v http://localhost:8080/ -X POST -d "key=value"
 
 
@@ -13,7 +13,7 @@ def main():
 
 
 def run():
-    server_ip = "127.0.0.1"
+    server_ip = '127.0.0.1'
     server_port = 8080
     listen_num = 5
     buffer_size = 1024
@@ -32,16 +32,22 @@ def run():
             # 5.クライアントと接続する
             client, address = tcp_server.accept()
             with client:
-                print("[*] Connected!! [ Source : {}]".format(address))
+                print('[*] Connected!! [ Source : {}]'.format(address))
 
                 # 6.データを受信する
                 data = client.recv(buffer_size)
-                print("[*] Received Data : {}".format(data))
+                print('[*] Received Data : {}'.format(data))
                 str_data = data.decode('utf-8')
 
                 print('>>> start')
+                list_data = str_data.split('\r\n')
+                # リクエストを表示
+                for data in list_data:
+                    print(data)
+
                 send_data = b'HTTP/1.1 200 OK\r\n'
                 send_data += b'\r\n'
+                print('>>> end')
 
                 # GETの場合
                 if str_data.startswith('GET'):
@@ -52,14 +58,9 @@ def run():
                     # TODO: リクエストを処理する
                     # list_data = str_data.split("\r\n\r\n")
 
-                print('>>> end')
-
                 # 7.クライアントへデータを返す
                 client.send(send_data)
 
-                # 8.接続を終了させる
-                # client.close()
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
